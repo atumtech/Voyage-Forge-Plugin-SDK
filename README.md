@@ -1,0 +1,109 @@
+# Voyage Forge Plugin SDK
+
+Public TypeScript SDK for building Voyage Forge plugins.
+
+The SDK contains the stable authoring surface for plugins that run inside Voyage Forge:
+
+- `definePlugin`
+- `PLUGIN_API_VERSION`
+- panel and exporter types
+- world snapshot types
+- optional helpers for specialized integrations, including trigger builders
+
+Plugins should depend only on `@voyage-forge/plugin-sdk`, React, and their own code. Do not import Voyage Forge app internals if you want a portable plugin.
+
+## Install
+
+```bash
+npm install @voyage-forge/plugin-sdk
+```
+
+Peer dependency:
+
+- `react`: `^18.0.0 || ^19.0.0`
+
+## Minimal Plugin
+
+```tsx
+import React from "react";
+import {
+  PLUGIN_API_VERSION,
+  definePlugin,
+  type PluginPanelProps,
+} from "@voyage-forge/plugin-sdk";
+
+const ExamplePanel: React.FC<PluginPanelProps> = ({ world }) => (
+  <pre>{JSON.stringify(Object.keys(world ?? {}), null, 2)}</pre>
+);
+
+export default definePlugin({
+  id: "com.example.hello",
+  name: "Hello",
+  version: "1.0.0",
+  apiVersion: PLUGIN_API_VERSION,
+  panels: [{ id: "main", label: "Hello", component: ExamplePanel }],
+});
+```
+
+## What Plugins Can Do
+
+The current public plugin surface supports:
+
+- Workspace panels rendered inside Forge while a project is open.
+- Export actions that generate downloadable files from the current world snapshot.
+- Read-only access to world data through typed SDK props and export context.
+- Specialized helper APIs for common integration patterns, such as trigger-builder JSON exchange.
+
+Plugins cannot directly mutate an open Forge project through the public SDK yet. If a plugin needs to return edited data, use an export/import handoff until Forge exposes a versioned write API.
+
+## Guides
+
+- [`docs/plugin-author-guide.md`](./docs/plugin-author-guide.md): start here for general plugin authoring.
+- [`examples/trigger-builder-bridge`](./examples/trigger-builder-bridge): a typechecked example plugin.
+- [`docs/trigger-builder-plugin-integration.md`](./docs/trigger-builder-plugin-integration.md): trigger-builder payload and bridge details.
+- [`docs/trigger-gui-editor-integration.md`](./docs/trigger-gui-editor-integration.md): a concrete visual trigger editor example.
+
+## Specialized Example: Trigger Builders
+
+External trigger builders can use the SDK without importing Forge internals:
+
+```ts
+import {
+  createPluginTriggerBuilderExport,
+  summarizePluginTriggerBudget,
+} from "@voyage-forge/plugin-sdk";
+
+const payload = createPluginTriggerBuilderExport(world);
+const budget = summarizePluginTriggerBudget(payload.triggers);
+```
+
+The payload format is `voyage-forge.trigger-builder.v1` and includes:
+
+- the current trigger record
+- Forge trigger constraints
+- semantic and mechanical trigger budget counts
+- per-trigger serialized size warnings
+
+The current plugin host treats world data as read-only. Trigger tools should round-trip through an exporter/import workflow until Forge exposes a versioned write API.
+
+## Development
+
+```bash
+npm install
+npm run verify
+```
+
+Useful scripts:
+
+- `npm run typecheck`
+- `npm run build`
+- `npm run example:typecheck`
+- `npm run dry-run`
+
+## Versioning
+
+`PLUGIN_API_VERSION` describes host compatibility. Additive helper exports can ship as npm minor versions without changing it. Bump `PLUGIN_API_VERSION` only when the host contract changes in a way that may reject or break existing plugins.
+
+## License
+
+MIT. See [`LICENSE`](./LICENSE).

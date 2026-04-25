@@ -1,0 +1,57 @@
+{
+  "name": "@voyage-forge/plugin-sdk",
+  "version": "0.2.0",
+  "description": "Public plugin SDK for Voyage Forge extensions.",
+  "license": "MIT",
+  "keywords": [
+    "voyage-forge",
+    "plugin",
+    "sdk",
+    "trigger-builder",
+    "react",
+    "typescript"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atumtech/Voyage-Forge-Plugin-SDK.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atumtech/Voyage-Forge-Plugin-SDK/issues"
+  },
+  "homepage": "https://github.com/atumtech/Voyage-Forge-Plugin-SDK#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "example:typecheck": "tsc -p examples/trigger-builder-bridge/tsconfig.json --noEmit",
+    "verify": "npm run typecheck && npm run build && npm run example:typecheck",
+    "dry-run": "npm publish --dry-run",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "~5.8.2"
+  }
+}
