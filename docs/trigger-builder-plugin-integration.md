@@ -1,6 +1,6 @@
 # Trigger Builder Plugin Integration
 
-This guide describes one specialized plugin pattern: integrating external trigger-builder tools with Voyage Forge through `@voyage-forge/plugin-sdk`.
+This guide covers one specialized plugin pattern: connecting an external trigger builder to Voyage Forge through `@voyage-forge/plugin-sdk`.
 
 For general plugin authoring, start with [`plugin-author-guide.md`](./plugin-author-guide.md). If you are building a visual trigger editor, see [`trigger-gui-editor-integration.md`](./trigger-gui-editor-integration.md) for the recommended user workflow, embedded-panel option, validation checklist, and UX guidance.
 
@@ -87,4 +87,4 @@ This keeps external tools portable and avoids coupling them to Forge stores, val
 
 ## Future API Direction
 
-If Forge needs tighter trigger-builder UX, extend the SDK with a versioned host capability rather than exposing app internals. A future write API should be additive, explicit about validation failures, and scoped to known world sections such as `triggers`.
+If Forge needs tighter trigger-builder UX, add a versioned SDK capability rather than exposing app internals. A future write API should be additive, clear about validation failures, and scoped to known world sections such as `triggers`.

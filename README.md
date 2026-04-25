@@ -10,7 +10,7 @@ The SDK contains the stable authoring surface for plugins that run inside Voyage
 - world snapshot types
 - optional helpers for specialized integrations, including trigger builders
 
-Plugins should depend only on `@voyage-forge/plugin-sdk`, React, and their own code. Do not import Voyage Forge app internals if you want a portable plugin.
+For a portable plugin, depend on `@voyage-forge/plugin-sdk`, React, and your own code. Do not import Forge app internals.
 
 ## Install
 
@@ -54,7 +54,7 @@ The current public plugin surface supports:
 - Read-only access to world data through typed SDK props and export context.
 - Specialized helper APIs for common integration patterns, such as trigger-builder JSON exchange.
 
-Plugins cannot directly mutate an open Forge project through the public SDK yet. If a plugin needs to return edited data, use an export/import handoff until Forge exposes a versioned write API.
+Plugins cannot directly mutate an open Forge project through the public SDK yet. If a plugin needs to return edited data, use an export/import handoff until Forge has a versioned write API.
 
 ## Guides
 

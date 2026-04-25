@@ -1,8 +1,8 @@
 # Plugin Author Guide
 
-This guide is for anyone who wants to build a portable plugin for Voyage Forge using `@voyage-forge/plugin-sdk`.
+This guide is for anyone building a portable plugin for Voyage Forge with `@voyage-forge/plugin-sdk`.
 
-The SDK is intentionally small. A plugin can add workspace panels and export actions while reading the current world snapshot. Plugins should not import Forge app internals, private stores, or backend routes.
+The SDK is small on purpose. A plugin can add workspace panels, add export actions, and read the current world snapshot. It should not import Forge app internals, private stores, or backend routes.
 
 ## Install
 
@@ -97,9 +97,9 @@ export default definePlugin({
 });
 ```
 
-## Plugin Ideas
+## Good Plugin Ideas
 
-Portable plugins are a good fit for:
+Portable plugins are a good fit for things like:
 
 - world quality reports
 - custom export formats
@@ -108,7 +108,7 @@ Portable plugins are a good fit for:
 - writer-facing planning tools
 - bridge plugins for external tools
 
-Trigger-builder integrations are one example of a bridge plugin. See [`trigger-builder-plugin-integration.md`](./trigger-builder-plugin-integration.md) for that specific workflow.
+Trigger builders are one example of a bridge plugin. See [`trigger-builder-plugin-integration.md`](./trigger-builder-plugin-integration.md) for that workflow.
 
 ## Boundaries
 
@@ -130,7 +130,7 @@ Portable plugins should not depend on:
 
 ## Returning Edited Data
 
-The public SDK does not currently expose a direct save API. If your plugin edits data, return it through a download, copy-to-clipboard flow, or external import workflow until Forge adds a versioned write capability.
+The public SDK does not currently expose a direct save API. If your plugin edits data, return it through a download, copy-to-clipboard flow, or import workflow until Forge adds a versioned write capability.
 
 ## Verify Locally
 

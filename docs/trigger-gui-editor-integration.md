@@ -1,8 +1,8 @@
 # Visual Trigger Editor Example
 
-This guide is a specialized example for plugin authors building a visual trigger editor. For general plugin development, start with [`plugin-author-guide.md`](./plugin-author-guide.md).
+This is a concrete example for plugin authors building a visual trigger editor. For general plugin development, start with [`plugin-author-guide.md`](./plugin-author-guide.md).
 
-Trigger editors are a bridge-plugin use case: the plugin reads Forge world data, packages a trigger payload for an external or embedded editor, and returns edited JSON through an import/export handoff.
+Trigger editors are bridge plugins. They read Forge world data, package a trigger payload for an external or embedded editor, and return edited JSON through an import/export handoff.
 
 The short version for trigger editors:
 
@@ -12,9 +12,9 @@ The short version for trigger editors:
 - Validate against the SDK's public trigger constraints before returning data.
 - Treat Forge projects as read-only from portable plugins until Forge exposes a versioned write API.
 
-## Supported Trigger Editor Shapes
+## Pick An Integration Shape
 
-There are two supported shapes.
+There are two practical shapes.
 
 ### External Editor
 
@@ -26,7 +26,7 @@ Use this if the trigger builder is a separate web app, desktop app, or hosted to
 4. Your editor exports an updated payload or plain trigger record.
 5. The user brings the JSON back into Forge through the normal JSON/import workflow.
 
-This is the safest integration because it does not require your app to run inside Forge.
+This is the safest path because the editor does not need to run inside Forge.
 
 ### Embedded Forge Panel
 
@@ -189,7 +189,7 @@ Example payload:
 
 ## Trigger Definition Rules
 
-The SDK intentionally keeps trigger definitions flexible so external editors can preserve Forge fields they do not understand.
+The SDK keeps trigger definitions flexible so external editors can preserve Forge fields they do not understand.
 
 Known top-level fields:
 
@@ -295,7 +295,7 @@ Do not depend on:
 - undocumented globals
 - arbitrary `@/` imports from the app source tree
 
-If direct save-back becomes necessary, it should be added as a versioned SDK capability so external editors can handle validation failures and host compatibility cleanly.
+When Forge adds direct save-back, it should be a versioned SDK capability so external editors can handle validation failures and host compatibility cleanly.
 
 ## Integration Checklist
 
