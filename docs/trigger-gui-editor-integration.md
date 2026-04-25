@@ -21,9 +21,9 @@ There are two practical shapes.
 Use this if the trigger builder is a separate web app, desktop app, or hosted tool.
 
 1. Forge exports a `voyage-forge.trigger-builder.v1` JSON file.
-2. Your editor imports that JSON and presents a visual trigger builder.
-3. Your editor validates counts and per-trigger size limits.
-4. Your editor exports an updated payload or plain trigger record.
+2. The editor imports that JSON and presents a visual trigger builder.
+3. The editor validates counts and per-trigger size limits.
+4. The editor exports an updated payload or plain trigger record.
 5. The user brings the JSON back into Forge through the normal JSON/import workflow.
 
 This is the safest path because the editor does not need to run inside Forge.
@@ -203,10 +203,10 @@ Known top-level fields:
 Recommended editor behavior:
 
 - Preserve unknown fields when loading and saving.
-- Preserve condition and effect objects your editor does not recognize.
+- Preserve condition and effect objects the editor does not recognize.
 - Use stable trigger IDs as object keys, such as `enter_smugglers_den`.
 - Avoid rewriting IDs unless the user explicitly renames a trigger.
-- Prefer empty arrays over missing arrays when your editor creates new triggers.
+- Prefer empty arrays over missing arrays when the editor creates new triggers.
 - Keep `script` as a string, even if your GUI does not edit scripts.
 
 ## Budget and Validation
@@ -263,7 +263,7 @@ or:
 type PlainTriggerRecord = PluginTriggerRecord;
 ```
 
-The preferred payload is better because it lets Forge and the user see which constraints your editor validated against.
+The preferred payload is better because it lets Forge and the user see which constraints the editor validated against.
 
 ## UX Recommendations
 
@@ -299,7 +299,7 @@ When Forge adds direct save-back, it should be a versioned SDK capability so ext
 
 ## Integration Checklist
 
-Before sharing your editor with Forge users:
+Before sharing the editor with Forge users:
 
 - Import only from `@voyage-forge/plugin-sdk`.
 - Accept `voyage-forge.trigger-builder.v1` payloads.

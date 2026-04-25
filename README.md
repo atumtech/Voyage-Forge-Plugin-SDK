@@ -84,7 +84,7 @@ The payload format is `voyage-forge.trigger-builder.v1` and includes:
 - semantic and mechanical trigger budget counts
 - per-trigger serialized size warnings
 
-The current plugin host treats world data as read-only. Trigger tools should round-trip through an exporter/import workflow until Forge exposes a versioned write API.
+The current plugin host treats world data as read-only. Trigger tools round-trip through an exporter/import workflow until Forge has a versioned write API.
 
 ## Development
 

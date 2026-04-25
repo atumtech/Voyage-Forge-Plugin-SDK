@@ -31,7 +31,7 @@ The payload contains:
 
 ## Trigger Constraints
 
-Trigger builders should validate against the exported constraints before handing data back to Forge:
+Validate against the exported constraints before handing trigger data back to Forge:
 
 - Semantic triggers: `200`
 - Mechanical triggers: `500`
@@ -87,4 +87,4 @@ This keeps external tools portable and avoids coupling them to Forge stores, val
 
 ## Future API Direction
 
-If Forge needs tighter trigger-builder UX, add a versioned SDK capability rather than exposing app internals. A future write API should be additive, clear about validation failures, and scoped to known world sections such as `triggers`.
+For tighter trigger-builder UX, add a versioned SDK capability rather than exposing app internals. A future write API needs to be additive, clear about validation failures, and scoped to known world sections such as `triggers`.

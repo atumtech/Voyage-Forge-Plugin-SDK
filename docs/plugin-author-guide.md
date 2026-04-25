@@ -2,7 +2,7 @@
 
 This guide is for anyone building a portable plugin for Voyage Forge with `@voyage-forge/plugin-sdk`.
 
-The SDK is small on purpose. A plugin can add workspace panels, add export actions, and read the current world snapshot. It should not import Forge app internals, private stores, or backend routes.
+The SDK is small on purpose. A plugin can add workspace panels, add export actions, and read the current world snapshot. Do not import Forge app internals, private stores, or backend routes.
 
 ## Install
 
@@ -112,7 +112,7 @@ Trigger builders are one example of a bridge plugin. See [`trigger-builder-plugi
 
 ## Boundaries
 
-Portable plugins should:
+For portable plugins:
 
 - import only from `@voyage-forge/plugin-sdk`, React, and their own package
 - treat `world` as read-only
@@ -120,7 +120,7 @@ Portable plugins should:
 - keep expensive work out of module top level
 - set `apiVersion: PLUGIN_API_VERSION`
 
-Portable plugins should not depend on:
+Do not depend on:
 
 - Forge's internal Zustand stores
 - private validation modules
