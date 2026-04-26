@@ -68,6 +68,26 @@ export type PluginTriggerBuilderExport = {
   budget: PluginTriggerBudgetSummary;
 };
 
+export type PluginApiFetch = (
+  path: string,
+  init?: RequestInit,
+) => Promise<Response>;
+
+export type PluginHostApiLimits = {
+  allowedPathPrefixes: readonly string[];
+  maxConcurrentRequests: number;
+  maxRequestsPerWindow: number;
+  rateLimitWindowMs: number;
+  requestTimeoutMs: number;
+};
+
+export type PluginHostApi = {
+  buildUrl: (path: string) => string;
+  fetch: PluginApiFetch;
+  isAuthenticated: () => Promise<boolean>;
+  limits: PluginHostApiLimits;
+};
+
 export const isPluginRecord = (value: unknown): value is PluginRecord =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
@@ -212,6 +232,7 @@ export interface PluginWorldData extends Record<string, unknown> {
 export type PluginHostContext = {
   application: "voyage-forge";
   pluginApiVersion: typeof PLUGIN_API_VERSION;
+  api?: PluginHostApi;
 };
 
 export type PluginDescriptor = {

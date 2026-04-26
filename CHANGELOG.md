@@ -6,6 +6,10 @@ All notable changes to `@voyage-forge/plugin-sdk` will be documented here.
 
 - Prepared the SDK as a standalone public repository.
 
+## 0.3.0
+
+- Added authenticated host API helper types for plugins running inside Forge.
+
 ## 0.2.0
 
 - Added trigger-builder exchange helpers and public trigger constraints.

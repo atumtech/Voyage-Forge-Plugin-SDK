@@ -7,6 +7,7 @@ The SDK contains the stable authoring surface for plugins that run inside Voyage
 - `definePlugin`
 - `PLUGIN_API_VERSION`
 - panel and exporter types
+- authenticated host API helpers
 - world snapshot types
 - optional helpers for specialized integrations, including trigger builders
 
@@ -52,9 +53,10 @@ The current public plugin surface supports:
 - Workspace panels rendered inside Forge while a project is open.
 - Export actions that generate downloadable files from the current world snapshot.
 - Read-only access to world data through typed SDK props and export context.
+- Authenticated calls to approved Forge API routes through `host.api.fetch()`.
 - Specialized helper APIs for common integration patterns, such as trigger-builder JSON exchange.
 
-Plugins cannot directly mutate an open Forge project through the public SDK yet. If a plugin needs to return edited data, use an export/import handoff until Forge has a versioned write API.
+Plugins can call approved authenticated Forge API routes from inside Forge, but they cannot directly mutate the open local project through the public SDK yet. If a plugin needs to return edited project data, use an export/import handoff until Forge has a versioned write API.
 
 ## Guides
 

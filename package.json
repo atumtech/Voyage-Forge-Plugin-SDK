@@ -1,6 +1,6 @@
 {
   "name": "@voyage-forge/plugin-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Public plugin SDK for Voyage Forge extensions.",
   "license": "MIT",
   "keywords": [

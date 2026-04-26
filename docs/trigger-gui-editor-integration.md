@@ -10,7 +10,8 @@ The short version for trigger editors:
 - Read triggers from the `world` snapshot passed to a plugin panel or exporter.
 - Exchange trigger data with the `voyage-forge.trigger-builder.v1` payload.
 - Validate against the SDK's public trigger constraints before returning data.
-- Treat Forge projects as read-only from portable plugins until Forge exposes a versioned write API.
+- Use `host.api.fetch()` for approved authenticated Forge API routes from inside Forge.
+- Treat local Forge project writes as a separate capability until Forge exposes a versioned write API.
 
 ## Pick An Integration Shape
 
@@ -32,7 +33,7 @@ This is the safest path because the editor does not need to run inside Forge.
 
 Use this if the editor should appear inside the Forge workspace as a plugin panel.
 
-The panel receives `PluginPanelProps`, including the read-only `world` snapshot. Your panel can show a GUI, derive trigger state, and generate downloadable JSON. It cannot directly save edited triggers back into the open Forge project through the public SDK yet.
+The panel receives `PluginPanelProps`, including the read-only `world` snapshot and authenticated `host.api` helpers. The panel can show a GUI, derive trigger state, call approved Forge API routes, and generate downloadable JSON. It cannot directly save edited triggers back into the open Forge project through the public SDK yet.
 
 ```tsx
 import React from "react";
@@ -44,9 +45,10 @@ import {
   type PluginPanelProps,
 } from "@voyage-forge/plugin-sdk";
 
-const TriggerEditorPanel: React.FC<PluginPanelProps> = ({ world }) => {
+const TriggerEditorPanel: React.FC<PluginPanelProps> = ({ host, world }) => {
   const triggers = getPluginWorldTriggers(world);
   const budget = summarizePluginTriggerBudget(triggers);
+  const canCallForgeApi = Boolean(host.api);
 
   return (
     <section>
@@ -55,6 +57,7 @@ const TriggerEditorPanel: React.FC<PluginPanelProps> = ({ world }) => {
         {budget.semanticCount} semantic / {budget.mechanicalCount} mechanical
         triggers
       </p>
+      <p>Authenticated API: {canCallForgeApi ? "available" : "unavailable"}</p>
       {/* Mount a visual editor here. */}
     </section>
   );
@@ -115,6 +118,22 @@ export default definePlugin({
 ```
 
 See [`examples/trigger-builder-bridge`](../examples/trigger-builder-bridge) for a typechecked example.
+
+## Call Authenticated Forge APIs
+
+Plugins running inside Forge receive `host.api`. Use it for approved authenticated API calls instead of reading session tokens or importing Forge app modules.
+
+In v0.3.0, the host API is deliberately narrow: `/api/compute/*` only, auth preflight required, Forge-owned auth headers only, credentials included, and per-plugin request limits applied.
+
+```ts
+const response = await host.api?.fetch("/api/compute/dedup-groups", {
+  body: JSON.stringify({ world }),
+  headers: { "Content-Type": "application/json" },
+  method: "POST",
+});
+```
+
+If the editor needs an API route that does not exist yet, define that route in Forge with normal app auth, add it to the plugin host allowlist, and call it through `host.api.fetch()`.
 
 ## Payload Contract
 
@@ -302,6 +321,7 @@ When Forge adds direct save-back, it should be a versioned SDK capability so ext
 Before sharing the editor with Forge users:
 
 - Import only from `@voyage-forge/plugin-sdk`.
+- Use `host.api.fetch()` for authenticated Forge API calls.
 - Accept `voyage-forge.trigger-builder.v1` payloads.
 - Preserve unknown trigger, condition, and effect fields.
 - Validate counts and per-trigger size before export.
