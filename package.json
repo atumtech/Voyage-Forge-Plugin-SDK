@@ -42,7 +42,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "example:typecheck": "tsc -p examples/trigger-builder-bridge/tsconfig.json --noEmit",
+    "example:trigger-builder:typecheck": "tsc -p examples/trigger-builder-bridge/tsconfig.json --noEmit",
+    "example:world-puppeteer:typecheck": "tsc -p examples/world-puppeteer-marketplace/tsconfig.json --noEmit",
+    "example:typecheck": "npm run example:trigger-builder:typecheck && npm run example:world-puppeteer:typecheck",
     "verify": "npm run typecheck && npm run build && npm run example:typecheck",
     "dry-run": "npm publish --dry-run",
     "prepublishOnly": "npm run build"

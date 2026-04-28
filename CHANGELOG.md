@@ -4,6 +4,7 @@ All notable changes to `@voyage-forge/plugin-sdk` will be documented here.
 
 ## Unreleased
 
+- Added a complete World Puppeteer marketplace archive example with manifest metadata, author credits, and a sandbox bridge panel.
 - Prepared the SDK as a standalone public repository.
 
 ## 0.4.0

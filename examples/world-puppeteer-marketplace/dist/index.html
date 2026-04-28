@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>World Puppeteer Marketplace Example</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #050816;
+        color: #eef2ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(12, 18, 33, 0.96), rgba(5, 8, 22, 1)),
+          #050816;
+      }
+
+      main {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #1f2a44;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 24px;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca3af;
+      }
+
+      h3 {
+        font-size: 15px;
+        line-height: 1.3;
+      }
+
+      a {
+        color: #67e8f9;
+      }
+
+      .meta {
+        display: grid;
+        gap: 6px;
+      }
+
+      .credit {
+        max-width: 560px;
+        color: #aeb8cc;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .status-pill {
+        min-height: 34px;
+        border: 1px solid #274060;
+        border-radius: 7px;
+        background: #0e172b;
+        padding: 8px 11px;
+        color: #dbeafe;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.78fr) minmax(360px, 1.22fr);
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .surface {
+        border: 1px solid #1f2a44;
+        border-radius: 8px;
+        background: rgba(13, 21, 39, 0.92);
+      }
+
+      .panel {
+        display: grid;
+        gap: 16px;
+        padding: 18px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        color: #c7d2fe;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 174px;
+        resize: vertical;
+        border: 1px solid #2b3a58;
+        border-radius: 7px;
+        background: #070b18;
+        color: #eef2ff;
+        font: inherit;
+        font-size: 14px;
+        line-height: 1.55;
+        padding: 12px;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: #42d392;
+        box-shadow: 0 0 0 3px rgba(66, 211, 146, 0.13);
+      }
+
+      button {
+        min-height: 38px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        padding: 0 13px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      button.primary {
+        background: #42d392;
+        color: #031411;
+      }
+
+      button.secondary {
+        border-color: #2b3a58;
+        background: #101a31;
+        color: #e5e7eb;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .counts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .count {
+        min-height: 70px;
+        border: 1px solid #1f2a44;
+        border-radius: 7px;
+        background: #091225;
+        padding: 10px;
+      }
+
+      .count strong {
+        display: block;
+        color: #ffffff;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .count span {
+        display: block;
+        margin-top: 7px;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .preview {
+        min-height: 100%;
+      }
+
+      .preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid #1f2a44;
+        padding: 16px 18px;
+      }
+
+      pre {
+        margin: 0;
+        min-height: 430px;
+        overflow: auto;
+        padding: 18px;
+        color: #dbeafe;
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .log {
+        display: grid;
+        gap: 8px;
+        color: #aeb8cc;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .ok {
+        color: #86efac;
+      }
+
+      .warn {
+        color: #fbbf24;
+      }
+
+      .error {
+        color: #fca5a5;
+      }
+
+      footer {
+        margin-top: 16px;
+        color: #8fa0b8;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 820px) {
+        main {
+          padding: 16px;
+        }
+
+        header,
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          display: grid;
+        }
+
+        .counts {
+          grid-template-columns: 1fr;
+        }
+
+        .status-pill {
+          white-space: normal;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="meta">
+          <h1>World Puppeteer</h1>
+          <p class="credit">
+            Marketplace SDK example inspired by
+            <a href="https://github.com/nikolaj-lat/World-Puppeteer" target="_blank" rel="noreferrer">World Puppeteer</a>
+            by BinKompliziert / nikolaj-lat.
+          </p>
+        </div>
+        <div id="status" class="status-pill">Waiting for Forge snapshot</div>
+      </header>
+
+      <section class="layout">
+        <div class="surface panel">
+          <h2>Director Notes</h2>
+          <label>
+            Focus
+            <textarea id="notes" spellcheck="true">A city at the edge of a living storm, where guilds negotiate with weather spirits and every district has a different law of physics.</textarea>
+          </label>
+          <div class="actions">
+            <button id="previewButton" class="secondary" type="button">Preview</button>
+            <button id="applyButton" class="primary" type="button" disabled>Apply Lore</button>
+          </div>
+          <div class="counts" aria-label="Current world counts">
+            <div class="count"><strong id="realmCount">0</strong><span>Realms</span></div>
+            <div class="count"><strong id="locationCount">0</strong><span>Locations</span></div>
+            <div class="count"><strong id="npcCount">0</strong><span>NPCs</span></div>
+          </div>
+          <div id="log" class="log">
+            <p>Forge will send the current world snapshot after this panel reports ready.</p>
+          </div>
+        </div>
+
+        <div class="surface preview">
+          <div class="preview-head">
+            <h2>Staged worldLore patch</h2>
+            <h3 id="draftTitle">No draft yet</h3>
+          </div>
+          <pre id="preview">{}</pre>
+        </div>
+      </section>
+
+      <footer>
+        This portable artifact demonstrates the marketplace bridge. Production plugins can swap the deterministic draft step for Direct Claude, Oracle, or another reviewed adapter.
+      </footer>
+    </main>
+
+    <script>
+      const SECTION = "worldLore";
+      const UPSTREAM_URL = "https://github.com/nikolaj-lat/World-Puppeteer";
+
+      const state = {
+        world: {},
+        readonly: true,
+        supportedSections: [],
+        draft: null,
+        pendingRequestId: null,
+      };
+
+      const elements = {
+        status: document.getElementById("status"),
+        notes: document.getElementById("notes"),
+        previewButton: document.getElementById("previewButton"),
+        applyButton: document.getElementById("applyButton"),
+        preview: document.getElementById("preview"),
+        draftTitle: document.getElementById("draftTitle"),
+        log: document.getElementById("log"),
+        realmCount: document.getElementById("realmCount"),
+        locationCount: document.getElementById("locationCount"),
+        npcCount: document.getElementById("npcCount"),
+      };
+
+      const asRecord = (value) =>
+        value && typeof value === "object" && !Array.isArray(value) ? value : {};
+
+      const countRecord = (value) => Object.keys(asRecord(value)).length;
+
+      const firstNamedEntry = (value) => {
+        for (const [id, entry] of Object.entries(asRecord(value))) {
+          const record = asRecord(entry);
+          if (typeof record.name === "string" && record.name.trim()) {
+            return record.name.trim();
+          }
+          if (id.trim()) {
+            return id.trim();
+          }
+        }
+        return null;
+      };
+
+      const slugify = (value) =>
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 48) || "seed";
+
+      const makeRequestId = (prefix) =>
+        `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+      const postToForge = (message) => {
+        window.parent.postMessage(message, "*");
+      };
+
+      const notifyForge = (level, message) => {
+        postToForge({ type: "voyage-forge.plugin.notify", level, message });
+      };
+
+      const log = (message, className = "") => {
+        const paragraph = document.createElement("p");
+        if (className) {
+          paragraph.className = className;
+        }
+        paragraph.textContent = message;
+        elements.log.prepend(paragraph);
+      };
+
+      const updateCounts = () => {
+        elements.realmCount.textContent = String(countRecord(state.world.realms));
+        elements.locationCount.textContent = String(countRecord(state.world.locations));
+        elements.npcCount.textContent = String(countRecord(state.world.npcs));
+      };
+
+      const canWriteWorldLore = () =>
+        !state.readonly &&
+        state.supportedSections.includes(SECTION) &&
+        state.draft;
+
+      const updateControls = () => {
+        elements.applyButton.disabled = !canWriteWorldLore();
+      };
+
+      const normalizeTitle = (notes) => {
+        const trimmed = notes.trim();
+        if (!trimmed) {
+          return "World Puppeteer Seed";
+        }
+        const firstLine = trimmed.split(/\r?\n/).find(Boolean) || trimmed;
+        return firstLine.length > 72 ? `${firstLine.slice(0, 69)}...` : firstLine;
+      };
+
+      const summarizeCurrentWorld = () => {
+        const anchors = [
+          firstNamedEntry(state.world.realms),
+          firstNamedEntry(state.world.regions),
+          firstNamedEntry(state.world.locations),
+          firstNamedEntry(state.world.npcs),
+          firstNamedEntry(state.world.quests),
+        ].filter(Boolean);
+
+        return [
+          `${countRecord(state.world.realms)} realms`,
+          `${countRecord(state.world.regions)} regions`,
+          `${countRecord(state.world.locations)} locations`,
+          `${countRecord(state.world.npcs)} NPCs`,
+          `${countRecord(state.world.quests)} quests`,
+          anchors.length ? `Anchors: ${anchors.join(", ")}` : "Anchors: none yet",
+        ];
+      };
+
+      const createDraft = () => {
+        const createdAt = new Date();
+        const isoDate = createdAt.toISOString();
+        const notes = elements.notes.value.trim();
+        const title = normalizeTitle(notes);
+        const id = `world_puppeteer_${slugify(title)}_${isoDate.replace(/\D/g, "").slice(0, 14)}`;
+        const existingLore = asRecord(state.world.worldLore);
+        const focus =
+          notes ||
+          "Ask focused interview questions, then expand this seed with the upstream World Puppeteer workflow.";
+
+        const entry = {
+          id,
+          name: title,
+          summary: "A staged World Puppeteer planning seed generated inside a Forge marketplace panel.",
+          description: [
+            `Focus: ${focus}`,
+            `Current world snapshot: ${summarizeCurrentWorld().join("; ")}.`,
+            "Next step: hand this seed to a Claude, Direct Claude, or Oracle-backed adapter that can interview the author and expand structured Forge sections.",
+          ].join("\n\n"),
+          source: "world-puppeteer-marketplace-example",
+          createdAt: isoDate,
+          updatedAt: isoDate,
+          tags: ["world-puppeteer", "worldbuilding", "draft"],
+          credits: [
+            "Original World Puppeteer workflow by BinKompliziert / nikolaj-lat",
+            "Portable Forge marketplace example maintained by Voyage Forge",
+          ],
+          upstreamUrl: UPSTREAM_URL,
+        };
+
+        return {
+          section: SECTION,
+          value: { ...existingLore, [id]: entry },
+          entry,
+        };
+      };
+
+      const previewDraft = () => {
+        state.draft = createDraft();
+        elements.draftTitle.textContent = state.draft.entry.name;
+        elements.preview.textContent = JSON.stringify(
+          {
+            section: state.draft.section,
+            entry: state.draft.entry,
+          },
+          null,
+          2,
+        );
+        elements.status.textContent = "Draft staged";
+        log("Draft staged locally. Apply writes only the worldLore section.", "ok");
+        updateControls();
+      };
+
+      const applyDraft = () => {
+        if (!state.draft) {
+          previewDraft();
+        }
+
+        if (state.readonly) {
+          log("Forge loaded this panel in read-only mode.", "warn");
+          notifyForge("warning", "World Puppeteer cannot write while the workspace is read-only.");
+          return;
+        }
+
+        if (!state.supportedSections.includes(SECTION)) {
+          log("This host did not grant worldLore writes.", "error");
+          notifyForge("error", "World Puppeteer needs worldLore write permission.");
+          return;
+        }
+
+        const requestId = makeRequestId("world-puppeteer-apply");
+        state.pendingRequestId = requestId;
+        elements.status.textContent = "Applying worldLore";
+        elements.applyButton.disabled = true;
+        postToForge({
+          type: "voyage-forge.plugin.replaceSection",
+          requestId,
+          section: state.draft.section,
+          value: state.draft.value,
+        });
+      };
+
+      const handleSnapshot = (message) => {
+        state.world = asRecord(message.world);
+        state.readonly = Boolean(message.workspace && message.workspace.readonly);
+        state.supportedSections = Array.isArray(message.workspace && message.workspace.supportedSections)
+          ? message.workspace.supportedSections
+          : [];
+        elements.status.textContent = state.readonly ? "Read-only snapshot" : "Ready";
+        updateCounts();
+        updateControls();
+        log("Forge snapshot received.", "ok");
+      };
+
+      const handleResponse = (message) => {
+        if (state.pendingRequestId && message.requestId !== state.pendingRequestId) {
+          return;
+        }
+        state.pendingRequestId = null;
+        if (message.ok) {
+          elements.status.textContent = "Applied";
+          log(`Forge accepted ${message.section || "the update"}.`, "ok");
+          notifyForge("success", "World Puppeteer lore seed applied.");
+        } else {
+          elements.status.textContent = "Apply failed";
+          log(message.error || "Forge rejected the update.", "error");
+          notifyForge("error", message.error || "World Puppeteer update failed.");
+        }
+        updateControls();
+      };
+
+      window.addEventListener("message", (event) => {
+        const message = event.data;
+        if (!message || typeof message !== "object") {
+          return;
+        }
+        if (message.type === "voyage-forge.host.snapshot") {
+          handleSnapshot(message);
+        } else if (message.type === "voyage-forge.host.response") {
+          handleResponse(message);
+        }
+      });
+
+      elements.previewButton.addEventListener("click", previewDraft);
+      elements.applyButton.addEventListener("click", applyDraft);
+
+      postToForge({
+        type: "voyage-forge.plugin.ready",
+        requestId: "world-puppeteer-ready-v2",
+      });
+    </script>
+  </body>
+</html>

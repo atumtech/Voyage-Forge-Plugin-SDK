@@ -1,0 +1,46 @@
+{
+  "name": "World Puppeteer Example",
+  "summary": "A complete sandboxed marketplace example inspired by BinKompliziert's interview-first world builder.",
+  "version": "0.1.0",
+  "tags": [
+    "worldbuilding",
+    "claude",
+    "marketplace",
+    "example"
+  ],
+  "capabilities": [
+    "ui.panel",
+    "workspace.read",
+    "workspace.write"
+  ],
+  "panels": [
+    {
+      "id": "director",
+      "label": "World Puppeteer",
+      "entryUrl": "dist/index.html",
+      "sandbox": "allow-forms allow-popups allow-scripts",
+      "requiredCapabilities": [
+        "ui.panel",
+        "workspace.read",
+        "workspace.write"
+      ]
+    }
+  ],
+  "authorProfile": {
+    "displayName": "BinKompliziert",
+    "username": "nikolaj-lat",
+    "role": "Original World Puppeteer creator",
+    "bio": "Creator of the Claude Code World Puppeteer workflow adapted here as a Forge marketplace SDK example.",
+    "profileUrl": "https://github.com/nikolaj-lat",
+    "credits": [
+      "Original World Puppeteer workflow by BinKompliziert / nikolaj-lat",
+      "Portable Forge marketplace example maintained by Voyage Forge"
+    ],
+    "links": [
+      {
+        "label": "World Puppeteer",
+        "url": "https://github.com/nikolaj-lat/World-Puppeteer"
+      }
+    ]
+  }
+}

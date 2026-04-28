@@ -65,7 +65,8 @@ Plugins can call approved authenticated Forge API routes from inside Forge. Revi
 ## Guides
 
 - [`docs/plugin-author-guide.md`](./docs/plugin-author-guide.md): start here for general plugin authoring.
-- [`examples/trigger-builder-bridge`](./examples/trigger-builder-bridge): a typechecked example plugin.
+- [`examples/trigger-builder-bridge`](./examples/trigger-builder-bridge): a typechecked exporter example plugin.
+- [`examples/world-puppeteer-marketplace`](./examples/world-puppeteer-marketplace): a complete marketplace archive example with README, manifest, author credits, and a sandboxed panel.
 - [`docs/trigger-builder-plugin-integration.md`](./docs/trigger-builder-plugin-integration.md): trigger-builder payload and bridge details.
 - [`docs/trigger-gui-editor-integration.md`](./docs/trigger-gui-editor-integration.md): a concrete visual trigger editor example.
 

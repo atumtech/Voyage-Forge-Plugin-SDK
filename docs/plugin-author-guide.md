@@ -220,6 +220,8 @@ Useful SDK types:
 - `PluginSandboxHostMessage`
 - `PluginSandboxClientMessage`
 
+For an archive-shaped reference, see [`../examples/world-puppeteer-marketplace`](../examples/world-puppeteer-marketplace). It includes a public README, package metadata, `voyageforge.plugin.json`, author profile credits, and a sandboxed panel artifact that writes a staged `worldLore` entry through the reviewed bridge.
+
 ## Good Plugin Ideas
 
 Portable plugins are a good fit for things like:
@@ -267,4 +269,11 @@ If you add or update examples in this repository, also run:
 
 ```bash
 npm run example:typecheck
+```
+
+You can run one example at a time while iterating:
+
+```bash
+npm run example:trigger-builder:typecheck
+npm run example:world-puppeteer:typecheck
 ```
