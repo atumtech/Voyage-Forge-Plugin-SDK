@@ -8,6 +8,8 @@ The SDK contains the stable authoring surface for plugins that run inside Voyage
 - `PLUGIN_API_VERSION`
 - panel and exporter types
 - authenticated host API helpers
+- optional `host.workspace` helpers for reviewed, section-scoped writes
+- marketplace listing, sandbox panel, lifecycle, capability, role, and bridge message types
 - world snapshot types
 - optional helpers for specialized integrations, including trigger builders
 
@@ -53,10 +55,12 @@ The current public plugin surface supports:
 - Workspace panels rendered inside Forge while a project is open.
 - Export actions that generate downloadable files from the current world snapshot.
 - Read-only access to world data through typed SDK props and export context.
+- Reviewed Plugin API v2 workspace writes through `host.workspace.replaceSection()`.
 - Authenticated calls to approved Forge API routes through `host.api.fetch()`.
+- Marketplace metadata types for catalog pages, sandbox panels, and staged review.
 - Specialized helper APIs for common integration patterns, such as trigger-builder JSON exchange.
 
-Plugins can call approved authenticated Forge API routes from inside Forge, but they cannot directly mutate the open local project through the public SDK yet. If a plugin needs to return edited project data, use an export/import handoff until Forge has a versioned write API.
+Plugins can call approved authenticated Forge API routes from inside Forge. Reviewed Plugin API v2 hosts may also pass `host.workspace`, allowing section-scoped writes such as replacing `triggers` from an embedded trigger GUI.
 
 ## Guides
 
@@ -64,6 +68,27 @@ Plugins can call approved authenticated Forge API routes from inside Forge, but 
 - [`examples/trigger-builder-bridge`](./examples/trigger-builder-bridge): a typechecked example plugin.
 - [`docs/trigger-builder-plugin-integration.md`](./docs/trigger-builder-plugin-integration.md): trigger-builder payload and bridge details.
 - [`docs/trigger-gui-editor-integration.md`](./docs/trigger-gui-editor-integration.md): a concrete visual trigger editor example.
+
+## Marketplace Archive Metadata
+
+Forge detects marketplace metadata from the plugin archive. Include `README.md`, `package.json`, and either a `voyageForge` object in `package.json` or a root manifest such as `voyageforge.plugin.json`, `.voyageforge/plugin.json`, `forge.plugin.json`, or `plugin.json`.
+
+The README becomes the public marketplace description. Package or manifest metadata supplies name, summary, version, tags, capabilities, and panel declarations.
+
+Add optional author credits with `voyageForge.authorProfile`:
+
+```json
+{
+  "voyageForge": {
+    "authorProfile": {
+      "displayName": "Example Studio",
+      "role": "Plugin author",
+      "profileUrl": "https://example.com",
+      "credits": ["UI design", "Trigger validation"]
+    }
+  }
+}
+```
 
 ## Specialized Example: Trigger Builders
 
@@ -86,7 +111,7 @@ The payload format is `voyage-forge.trigger-builder.v1` and includes:
 - semantic and mechanical trigger budget counts
 - per-trigger serialized size warnings
 
-The current plugin host treats world data as read-only. Trigger tools round-trip through an exporter/import workflow until Forge has a versioned write API.
+Trigger tools can still round-trip through exporter/import workflows. Reviewed embedded trigger GUI plugins can use `host.workspace.replaceSection("triggers", nextTriggers)` when the host grants that capability.
 
 ## Development
 

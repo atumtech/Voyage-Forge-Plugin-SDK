@@ -25,6 +25,7 @@ Peer dependency:
 | Exporters | Functions that generate downloadable files from the current world. |
 | `PluginWorldData` | Read-only snapshot of the current world JSON. |
 | `host.api` | Authenticated Forge API helper passed to panels and exporters. |
+| `host.workspace` | Plugin API v2 bridge for scoped reads and reviewed writes. |
 
 ## Minimal Panel
 
@@ -104,10 +105,10 @@ Plugins running inside Forge receive `host.api`. Use it for calls to approved Fo
 
 Do not read session tokens from storage. Do not rebuild auth headers in plugin code. `host.api.fetch()` uses Forge's existing account/session transport and includes credentials for cookie-backed sessions.
 
-The v0.3.0 host API is intentionally narrow:
+The v0.4.0 / Plugin API v2 host API is still allowlisted:
 
 - `host.api.fetch()` checks the current Forge account session before the API call.
-- Only root-relative paths under `/api/compute/` are available.
+- Root-relative paths under approved Forge API prefixes are available, including `/api/compute/`, `/api/plugin-marketplace/`, `/api/plugins/`, `/api/projects/`, and `/api/workspaces/`.
 - Caller-provided `Authorization` and `X-VoyageForge-Session` headers are stripped and replaced by Forge.
 - Requests include cookies with `credentials: "include"`.
 - The host applies a timeout plus per-plugin concurrency and rate limits.
@@ -154,6 +155,71 @@ export default definePlugin({
 });
 ```
 
+## Workspace Writes
+
+Reviewed Plugin API v2 hosts may pass `host.workspace` to panels. Use it for scoped project updates instead of importing Forge stores:
+
+```ts
+await host.workspace?.replaceSection?.("triggers", nextTriggers, {
+  source: "trigger-builder",
+});
+```
+
+The host decides which sections are writable. Marketplace trigger GUI plugins should request `workspace.write.triggers`, then write only the `triggers` section after local validation.
+
+## Marketplace Manifests
+
+Marketplace catalog responses expose metadata, lifecycle state, capabilities, README markdown, and sandbox panel manifests. They should not expose submitted source code.
+
+Marketplace uploads detect metadata from the archive itself. Include `README.md` for the public description, `package.json` for `name`, `description`, `version`, and optional `keywords`, plus either a `voyageForge` object in `package.json` or a root manifest such as `voyageforge.plugin.json`, `.voyageforge/plugin.json`, `forge.plugin.json`, or `plugin.json`.
+
+Example package metadata:
+
+```json
+{
+  "name": "@example/trigger-builder",
+  "description": "Adds a visual trigger builder panel.",
+  "version": "1.0.0",
+  "keywords": ["triggers", "gui"],
+  "voyageForge": {
+    "authorProfile": {
+      "displayName": "Example Studio",
+      "username": "example-studio",
+      "role": "Plugin author",
+      "bio": "Builds workflow tools for Voyage Forge.",
+      "profileUrl": "https://example.com",
+      "discordUsername": "example",
+      "credits": ["UI design", "Trigger validation"],
+      "links": [{ "label": "Docs", "url": "https://example.com/docs" }]
+    },
+    "capabilities": ["ui.panel", "workspace.read", "workspace.write.triggers"],
+    "panels": [
+      {
+        "id": "builder",
+        "label": "Trigger Builder",
+        "requiredCapabilities": [
+          "ui.panel",
+          "workspace.read",
+          "workspace.write.triggers"
+        ]
+      }
+    ]
+  }
+}
+```
+
+Useful SDK types:
+
+- `PluginMarketplaceListing`
+- `PluginMarketplaceLifecycleStatus`
+- `PluginMarketplaceCapability`
+- `PluginMarketplacePanelManifest`
+- `PluginMarketplaceArchiveManifest`
+- `PluginMarketplaceArchivePanelManifest`
+- `PluginMarketplaceRole`
+- `PluginSandboxHostMessage`
+- `PluginSandboxClientMessage`
+
 ## Good Plugin Ideas
 
 Portable plugins are a good fit for things like:
@@ -188,7 +254,7 @@ Do not depend on:
 
 ## Returning Edited Data
 
-The public SDK does not currently expose a direct save API. If your plugin edits data, return it through a download, copy-to-clipboard flow, or import workflow until Forge adds a versioned write capability.
+Export/download handoffs are still valid for portable external tools. Embedded reviewed plugins can use `host.workspace.replaceSection()` for approved section-scoped writes.
 
 ## Verify Locally
 

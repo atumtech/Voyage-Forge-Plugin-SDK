@@ -6,7 +6,7 @@ For general plugin authoring, start with [`plugin-author-guide.md`](./plugin-aut
 
 ## Current Contract
 
-Forge plugins can read the current world snapshot and export files. They cannot mutate the world through the public SDK yet.
+Forge plugins can read the current world snapshot and export files. Plugin API v2 also exposes reviewed, section-scoped workspace writes through `host.workspace`, which is the preferred path for embedded trigger GUI plugins.
 
 For trigger builders, the supported exchange format is:
 
@@ -74,9 +74,20 @@ export default definePlugin({
 });
 ```
 
+## Embedded Trigger GUI Workflow
+
+Reviewed marketplace trigger GUI plugins can run inside Forge as sandboxed panels:
+
+1. Forge sends the current world snapshot and capability manifest to the sandboxed panel.
+2. The plugin edits triggers locally and validates against `constraints` and `contract`.
+3. The plugin sends a host bridge request to replace only the `triggers` section.
+4. Forge applies the write through `host.workspace.replaceSection("triggers", nextTriggers)`.
+
+Plugins should request the `workspace.write.triggers` marketplace capability instead of using broad workspace writes.
+
 ## Round-Trip Workflow
 
-Until the SDK exposes a versioned write API, use this workflow:
+For external tools that do not run inside Forge, use this workflow:
 
 1. The user exports `voyage-forge.trigger-builder.v1` JSON from Forge.
 2. The external builder imports the payload, edits or generates trigger definitions, and validates against `constraints`.
@@ -85,6 +96,6 @@ Until the SDK exposes a versioned write API, use this workflow:
 
 This keeps external tools portable and avoids coupling them to Forge stores, validation modules, or private backend routes.
 
-## Future API Direction
+## API Direction
 
-For tighter trigger-builder UX, add a versioned SDK capability rather than exposing app internals. A future write API needs to be additive, clear about validation failures, and scoped to known world sections such as `triggers`.
+Keep trigger writes versioned and section-scoped. Do not expose internal stores or private backend routes to achieve trigger edits.

@@ -2,7 +2,7 @@
 
 This is a concrete example for plugin authors building a visual trigger editor. For general plugin development, start with [`plugin-author-guide.md`](./plugin-author-guide.md).
 
-Trigger editors are bridge plugins. They read Forge world data, package a trigger payload for an external or embedded editor, and return edited JSON through an import/export handoff.
+Trigger editors are bridge plugins. They read Forge world data, package a trigger payload for an external or embedded editor, and either return edited JSON through an import/export handoff or, when reviewed for Plugin API v2, write the `triggers` section through `host.workspace`.
 
 The short version for trigger editors:
 
@@ -11,7 +11,7 @@ The short version for trigger editors:
 - Exchange trigger data with the `voyage-forge.trigger-builder.v1` payload.
 - Validate against the SDK's public trigger constraints before returning data.
 - Use `host.api.fetch()` for approved authenticated Forge API routes from inside Forge.
-- Treat local Forge project writes as a separate capability until Forge exposes a versioned write API.
+- Use `host.workspace.replaceSection("triggers", nextTriggers)` only when the Forge host grants that reviewed capability.
 
 ## Pick An Integration Shape
 
@@ -33,7 +33,7 @@ This is the safest path because the editor does not need to run inside Forge.
 
 Use this if the editor should appear inside the Forge workspace as a plugin panel.
 
-The panel receives `PluginPanelProps`, including the read-only `world` snapshot and authenticated `host.api` helpers. The panel can show a GUI, derive trigger state, call approved Forge API routes, and generate downloadable JSON. It cannot directly save edited triggers back into the open Forge project through the public SDK yet.
+The panel receives `PluginPanelProps`, including the read-only `world` snapshot, authenticated `host.api` helpers, and optional Plugin API v2 `host.workspace` helpers. Reviewed marketplace panels can save edited triggers back into the open Forge project by replacing only the `triggers` section.
 
 ```tsx
 import React from "react";
@@ -49,6 +49,7 @@ const TriggerEditorPanel: React.FC<PluginPanelProps> = ({ host, world }) => {
   const triggers = getPluginWorldTriggers(world);
   const budget = summarizePluginTriggerBudget(triggers);
   const canCallForgeApi = Boolean(host.api);
+  const canWriteTriggers = Boolean(host.workspace?.replaceSection);
 
   return (
     <section>
@@ -58,6 +59,7 @@ const TriggerEditorPanel: React.FC<PluginPanelProps> = ({ host, world }) => {
         triggers
       </p>
       <p>Authenticated API: {canCallForgeApi ? "available" : "unavailable"}</p>
+      <p>Trigger writes: {canWriteTriggers ? "available" : "unavailable"}</p>
       {/* Mount a visual editor here. */}
     </section>
   );
@@ -123,7 +125,7 @@ See [`examples/trigger-builder-bridge`](../examples/trigger-builder-bridge) for 
 
 Plugins running inside Forge receive `host.api`. Use it for approved authenticated API calls instead of reading session tokens or importing Forge app modules.
 
-In v0.3.0, the host API is deliberately narrow: `/api/compute/*` only, auth preflight required, Forge-owned auth headers only, credentials included, and per-plugin request limits applied.
+In v0.4.0 / Plugin API v2, the host API remains allowlisted: approved Forge API prefixes only, auth preflight required, Forge-owned auth headers only, credentials included, and per-plugin request limits applied.
 
 ```ts
 const response = await host.api?.fetch("/api/compute/dedup-groups", {
@@ -302,9 +304,9 @@ Good labels for user-facing actions:
 - `Export for Forge`
 - `Download Forge Trigger Payload`
 
-## Current Limitation: No Portable Save API
+## Save-Back Boundary
 
-Portable plugins cannot currently call `saveTriggers`, patch the world store, or apply edited data back into the open Forge project.
+Portable external tools should still use export/import handoffs. Reviewed embedded plugins can apply edited trigger records through `host.workspace.replaceSection("triggers", nextTriggers)`.
 
 Do not depend on:
 
@@ -314,7 +316,7 @@ Do not depend on:
 - undocumented globals
 - arbitrary `@/` imports from the app source tree
 
-When Forge adds direct save-back, it should be a versioned SDK capability so external editors can handle validation failures and host compatibility cleanly.
+Do not request broad workspace writes for trigger editors when `workspace.write.triggers` is sufficient.
 
 ## Integration Checklist
 
@@ -326,5 +328,5 @@ Before sharing the editor with Forge users:
 - Preserve unknown trigger, condition, and effect fields.
 - Validate counts and per-trigger size before export.
 - Export updated data as the same payload format when possible.
-- Document that save-back is currently a JSON/import handoff.
+- Document whether save-back uses JSON/import handoff or reviewed Plugin API v2 workspace writes.
 - Test against the typechecked bridge example in this repository.

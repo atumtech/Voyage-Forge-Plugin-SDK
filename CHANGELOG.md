@@ -6,6 +6,13 @@ All notable changes to `@voyage-forge/plugin-sdk` will be documented here.
 
 - Prepared the SDK as a standalone public repository.
 
+## 0.4.0
+
+- Added Plugin API v2 host workspace types for reviewed section-scoped writes.
+- Added marketplace listing, lifecycle, capability, role, and sandbox panel manifest types.
+- Added typed sandbox host/client bridge messages for marketplace panels.
+- Expanded trigger-builder payloads with the public buildable trigger contract.
+
 ## 0.3.0
 
 - Added authenticated host API helper types for plugins running inside Forge.

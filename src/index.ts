@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-export const PLUGIN_API_VERSION = 1 as const;
+export const PLUGIN_API_VERSION = 2 as const;
 
 export type PluginExportScope = "full" | "section";
 export type PluginExportSection =
@@ -18,6 +18,93 @@ export const PLUGIN_TRIGGER_CONSTRAINTS = {
   semanticLimit: 200,
   mechanicalLimit: 500,
   maxTriggerChars: 10000,
+  maxConditions: 5,
+  maxEffects: 5,
+} as const;
+
+export const PLUGIN_TRIGGER_CONDITION_TYPES = [
+  "story",
+  "action",
+  "story-text",
+  "action-text",
+  "player-level",
+  "game-tick",
+  "party-realm",
+  "party-region",
+  "party-location",
+  "party-area",
+  "known-entity",
+  "player-traits",
+  "quests-completed",
+  "player-resource",
+  "read-string",
+  "read-number",
+  "read-boolean",
+  "read-array",
+] as const;
+
+export const PLUGIN_TRIGGER_EFFECT_TYPES = [
+  "story",
+  "quest-progress",
+  "quest-init",
+  "party-realm",
+  "party-region",
+  "party-location",
+  "party-area",
+  "player-resource",
+  "known-entity",
+  "player-traits",
+  "write-string",
+  "write-number",
+  "write-boolean",
+  "write-array",
+] as const;
+
+export const PLUGIN_TRIGGER_TEXT_OPERATORS = [
+  "equals",
+  "notEquals",
+  "contains",
+  "notContains",
+  "regex",
+] as const;
+export const PLUGIN_TRIGGER_NUMBER_OPERATORS = [
+  "equals",
+  "notEquals",
+  "greaterThan",
+  "lessThan",
+  "greaterThanOrEqual",
+  "lessThanOrEqual",
+] as const;
+export const PLUGIN_TRIGGER_BOOLEAN_OPERATORS = ["equals", "notEquals"] as const;
+export const PLUGIN_TRIGGER_ARRAY_OPERATORS = ["contains", "notContains"] as const;
+export const PLUGIN_TRIGGER_NUMERIC_EFFECT_OPERATORS = [
+  "set",
+  "add",
+  "subtract",
+  "multiply",
+  "divide",
+] as const;
+export const PLUGIN_TRIGGER_COLLECTION_EFFECT_OPERATORS = [
+  "set",
+  "add",
+  "remove",
+] as const;
+
+export const PLUGIN_TRIGGER_CONTRACT = {
+  conditionTypes: PLUGIN_TRIGGER_CONDITION_TYPES,
+  effectTypes: PLUGIN_TRIGGER_EFFECT_TYPES,
+  textOperators: PLUGIN_TRIGGER_TEXT_OPERATORS,
+  numberOperators: PLUGIN_TRIGGER_NUMBER_OPERATORS,
+  booleanOperators: PLUGIN_TRIGGER_BOOLEAN_OPERATORS,
+  arrayOperators: PLUGIN_TRIGGER_ARRAY_OPERATORS,
+  numericEffectOperators: PLUGIN_TRIGGER_NUMERIC_EFFECT_OPERATORS,
+  collectionEffectOperators: PLUGIN_TRIGGER_COLLECTION_EFFECT_OPERATORS,
+  phaseRule:
+    "Triggers with action or action-text conditions run in planning; all others run in state.",
+  scriptRule:
+    "Optional top-level script runs after conditions pass and before typed effects apply.",
+  semanticEmbeddingRule:
+    "Do not author embeddingId; Voyage generates semantic embeddings.",
 } as const;
 
 export type PluginTriggerBudgetKind = "semantic" | "mechanical";
@@ -65,6 +152,7 @@ export type PluginTriggerBuilderExport = {
   apiVersion: typeof PLUGIN_API_VERSION;
   triggers: PluginTriggerRecord;
   constraints: typeof PLUGIN_TRIGGER_CONSTRAINTS;
+  contract: typeof PLUGIN_TRIGGER_CONTRACT;
   budget: PluginTriggerBudgetSummary;
 };
 
@@ -87,6 +175,207 @@ export type PluginHostApi = {
   isAuthenticated: () => Promise<boolean>;
   limits: PluginHostApiLimits;
 };
+
+export type PluginWorkspaceSection =
+  | "aiInstructions"
+  | "storySettings"
+  | "factions"
+  | "death"
+  | "realms"
+  | "resourceSettings"
+  | "locationSettings"
+  | "abilities"
+  | "skills"
+  | "triggers"
+  | "worldLore"
+  | "itemSettings"
+  | "combatSettings"
+  | "otherSettings"
+  | "skillSettings"
+  | "storybookSettings"
+  | "attributeSettings"
+  | "attributes"
+  | "traits"
+  | "traitCategories"
+  | "items"
+  | "locations"
+  | "npcs"
+  | "storyStarts"
+  | "regions"
+  | "npcTypes"
+  | "nameFilterSettings"
+  | "tipSettings"
+  | "quests"
+  | "mapLayers";
+
+export type PluginWorkspaceMutationResult = {
+  ok: true;
+  section?: PluginWorkspaceSection;
+};
+
+export type PluginWorkspaceApi = {
+  readonly: boolean;
+  supportedSections: readonly PluginWorkspaceSection[];
+  readWorld: () => PluginWorldData;
+  readSection: (section: PluginWorkspaceSection) => unknown;
+  replaceWorld?: (
+    world: PluginWorldData,
+    options?: { source?: string },
+  ) => Promise<PluginWorkspaceMutationResult>;
+  replaceSection?: (
+    section: PluginWorkspaceSection,
+    value: unknown,
+    options?: { source?: string },
+  ) => Promise<PluginWorkspaceMutationResult>;
+};
+
+export type PluginMarketplaceLifecycleStatus =
+  | "draft"
+  | "sandbox"
+  | "in_review"
+  | "approved"
+  | "live"
+  | "rejected"
+  | "suspended";
+
+export type PluginMarketplaceVisibility = "private" | "unlisted" | "public";
+
+export type PluginMarketplaceRole =
+  | "plugin_author"
+  | "plugin_reviewer"
+  | "plugin_admin";
+
+export type PluginMarketplaceCapability =
+  | "workspace.read"
+  | "workspace.write"
+  | "workspace.write.triggers"
+  | "api.fetch"
+  | "ui.panel"
+  | "exporter";
+
+export type PluginMarketplacePanelManifest = {
+  id: string;
+  label: string;
+  entryUrl: string;
+  sandbox?: string;
+  requiredCapabilities?: PluginMarketplaceCapability[];
+};
+
+export type PluginMarketplaceArchivePanelManifest = Omit<
+  PluginMarketplacePanelManifest,
+  "entryUrl"
+> & {
+  /**
+   * Optional in uploaded archives. Forge rewrites reviewed marketplace panels to
+   * the immutable hosted artifact URL before public install.
+   */
+  entryUrl?: string;
+};
+
+export type PluginMarketplaceArchiveManifest = {
+  name?: string;
+  displayName?: string;
+  summary?: string;
+  description?: string;
+  version?: string;
+  tags?: string[];
+  capabilities?: PluginMarketplaceCapability[];
+  panels?: PluginMarketplaceArchivePanelManifest[];
+  authorProfile?: PluginMarketplaceAuthorProfile;
+  author?: string | PluginMarketplaceAuthorProfile;
+  authors?: string[];
+  credits?: string[];
+};
+
+export type PluginMarketplaceAuthorLink = {
+  label: string;
+  url: string;
+};
+
+export type PluginMarketplaceAuthorProfile = {
+  displayName?: string;
+  username?: string;
+  pronouns?: string;
+  role?: string;
+  bio?: string;
+  profileUrl?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  discordUsername?: string;
+  discordUserId?: string;
+  credits?: string[];
+  links?: PluginMarketplaceAuthorLink[];
+};
+
+export type PluginMarketplaceListing = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string;
+  version: string;
+  authorName: string;
+  authorProfile?: PluginMarketplaceAuthorProfile;
+  status: PluginMarketplaceLifecycleStatus;
+  visibility: PluginMarketplaceVisibility;
+  readmeMarkdown: string;
+  tags: string[];
+  capabilities: PluginMarketplaceCapability[];
+  panels: PluginMarketplacePanelManifest[];
+  installed?: boolean;
+  installedVersion?: string;
+  updatedAt: string;
+};
+
+export type PluginSandboxHostSnapshotMessage = {
+  type: "voyage-forge.host.snapshot";
+  requestId?: string;
+  apiVersion: typeof PLUGIN_API_VERSION;
+  plugin: PluginDescriptor;
+  listing: Pick<
+    PluginMarketplaceListing,
+    "id" | "slug" | "name" | "version" | "capabilities"
+  >;
+  world: PluginWorldData;
+  workspace: {
+    readonly: boolean;
+    supportedSections: readonly PluginWorkspaceSection[];
+  };
+};
+
+export type PluginSandboxHostResponseMessage = {
+  type: "voyage-forge.host.response";
+  requestId?: string;
+  ok: boolean;
+  section?: PluginWorkspaceSection;
+  error?: string;
+};
+
+export type PluginSandboxHostMessage =
+  | PluginSandboxHostSnapshotMessage
+  | PluginSandboxHostResponseMessage;
+
+export type PluginSandboxClientReadyMessage = {
+  type: "voyage-forge.plugin.ready";
+  requestId?: string;
+};
+
+export type PluginSandboxClientReplaceSectionMessage = {
+  type: "voyage-forge.plugin.replaceSection";
+  requestId?: string;
+  section: PluginWorkspaceSection;
+  value: unknown;
+};
+
+export type PluginSandboxClientNotifyMessage = {
+  type: "voyage-forge.plugin.notify";
+  level?: "info" | "success" | "warning" | "error";
+  message: string;
+};
+
+export type PluginSandboxClientMessage =
+  | PluginSandboxClientReadyMessage
+  | PluginSandboxClientReplaceSectionMessage
+  | PluginSandboxClientNotifyMessage;
 
 export const isPluginRecord = (value: unknown): value is PluginRecord =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -188,6 +477,7 @@ export const createPluginTriggerBuilderExport = (
     apiVersion: PLUGIN_API_VERSION,
     triggers,
     constraints: PLUGIN_TRIGGER_CONSTRAINTS,
+    contract: PLUGIN_TRIGGER_CONTRACT,
     budget: summarizePluginTriggerBudget(triggers),
   };
 };
@@ -233,6 +523,7 @@ export type PluginHostContext = {
   application: "voyage-forge";
   pluginApiVersion: typeof PLUGIN_API_VERSION;
   api?: PluginHostApi;
+  workspace?: PluginWorkspaceApi;
 };
 
 export type PluginDescriptor = {
